@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
+import 'combined_value_state_notifier.dart';
 import 'providers.dart';
 
 void main() {
-  runApp(ProviderScope(child: const MyApp()));
+  runApp(const ProviderScope(
+    child: MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -51,12 +53,15 @@ class MyCombinedWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final combinedStream = ref.watch(combinedStreamProvider);
+    final combinedState = ref.watch(combinedStateNotifierProvider);
 
-    return combinedStream.when(
-      data: (values) => Text('Stream A: ${values[0]}, Stream B: ${values[1]}'),
-      loading: () => const CircularProgressIndicator(),
-      error: (err, stack) => Text('Error: $err'),
-    );
+    switch (combinedState) {
+      case CombinedValueStateData(values: final values):
+        return Text('Stream A: ${values[0]}, Stream B: ${values[1]}');
+      case CombinedValueStateLoading():
+        return const CircularProgressIndicator();
+      case CombinedValueStateError(error: final error, stackTrace: final _):
+        return Text('Error: $error');
+    }
   }
 }
