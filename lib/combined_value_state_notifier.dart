@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 sealed class CombinedValueState {}
 
 class CombinedValueStateData extends CombinedValueState {
-  final List<int> values;
+  final (int, int) values;
 
   CombinedValueStateData(this.values);
 }
@@ -32,20 +32,18 @@ class CombinedValueStateNotifier extends StateNotifier<CombinedValueState> {
   void updateA(int value) {
     if (state is CombinedValueStateData) {
       CombinedValueStateData currentState = state as CombinedValueStateData;
-      currentState.values[0] = value;
-      state = currentState;
+      state = CombinedValueStateData((value, currentState.values.$2));
     } else {
-      state = CombinedValueStateData([value, 0]);
+      state = CombinedValueStateData((value, 0));
     }
   }
 
   void updateB(int value) {
     if (state is CombinedValueStateData) {
       CombinedValueStateData currentState = state as CombinedValueStateData;
-      currentState.values[1] = value;
-      state = currentState;
+      state = CombinedValueStateData((currentState.values.$1, value));
     } else {
-      state = CombinedValueStateData([0, value]);
+      state = CombinedValueStateData((0, value));
     }
   }
 }

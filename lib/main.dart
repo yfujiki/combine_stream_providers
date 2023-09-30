@@ -57,7 +57,7 @@ class MyCombinedWidget extends ConsumerWidget {
 
     switch (combinedState) {
       case CombinedValueStateData(values: final values):
-        return Text('Stream A: ${values[0]}, Stream B: ${values[1]}');
+        return Text('Stream A: ${values.$1}, Stream B: ${values.$2}');
       case CombinedValueStateLoading():
         return const CircularProgressIndicator();
       case CombinedValueStateError(error: final error, stackTrace: final _):
