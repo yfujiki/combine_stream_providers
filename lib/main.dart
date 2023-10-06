@@ -52,17 +52,17 @@ class MyCombinedWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final combineValue = ref.watch(combinedValueProvider);
+    final combineValue = ref.watch(combinedValueNotifierProvider);
 
     switch (combineValue) {
       case AsyncData():
-        final values = combineValue as AsyncData<(int, int)>;
+        final values = combineValue;
         return Text(
             'Stream A: ${values.value.$1}, Stream B: ${values.value.$2}');
       case AsyncLoading():
         return const CircularProgressIndicator();
       case AsyncError():
-        final error = combineValue as AsyncError;
+        final error = combineValue;
         return Text('Error: ${error.error}');
       default:
         return const Text('Unknown state');

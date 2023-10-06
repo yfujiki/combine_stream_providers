@@ -1,41 +1,57 @@
 import 'dart:async';
 
+import 'package:combine_stream_providers/providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class CombinedValueAsyncNotifier extends AsyncNotifier<(int, int)> {
   @override
   FutureOr<(int, int)> build() {
-    return (0, 0);
-  }
-
-  void updateWithError(Object error, StackTrace stackTrace) {
-    state = AsyncError(error, stackTrace);
-  }
-
-  void updateLoading() {
-    if (state is AsyncLoading) return;
     state = const AsyncLoading();
+
+    final asyncValueA = ref.watch(streamProviderA);
+    final asyncValueB = ref.watch(streamProviderB);
+
+    asyncValueA.when(data: (value) {
+      state = AsyncData(updateA(value));
+    }, error: (error, stackTrace) {
+      state = AsyncError(error, stackTrace);
+    }, loading: () {
+      state = const AsyncLoading();
+    });
+
+    asyncValueB.when(data: (value) {
+      state = AsyncData(updateB(value));
+    }, error: (error, stackTrace) {
+      state = AsyncError(error, stackTrace);
+    }, loading: () {
+      state = const AsyncLoading();
+    });
+
+    if (state.asData == null) {
+      state = const AsyncLoading();
+      return (0, 0);
+    }
+
+    return state.asData!.value;
   }
 
-  void updateA(int value) {
+  (int, int) updateA(int value) {
     switch (state) {
       case AsyncData():
         AsyncData currentState = state as AsyncData;
-        state = AsyncData((value, currentState.value.$2));
-        break;
+        return (value, currentState.value.$2);
       default:
-        state = AsyncData((value, 0));
+        return (value, 0);
     }
   }
 
-  void updateB(int value) {
+  (int, int) updateB(int value) {
     switch (state) {
       case AsyncData():
         AsyncData currentState = state as AsyncData;
-        state = AsyncData((currentState.value.$1, value));
-        break;
+        return (currentState.value.$1, value);
       default:
-        state = AsyncData((0, value));
+        return (0, value);
     }
   }
 }
