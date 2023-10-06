@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'combined_value_state_notifier.dart';
 import 'providers.dart';
 
 void main() {
@@ -53,15 +52,20 @@ class MyCombinedWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final combinedState = ref.watch(combinedStateNotifierProvider);
+    final combineValue = ref.watch(combinedValueProvider);
 
-    switch (combinedState) {
-      case CombinedValueStateData(values: final values):
-        return Text('Stream A: ${values.$1}, Stream B: ${values.$2}');
-      case CombinedValueStateLoading():
+    switch (combineValue) {
+      case AsyncData():
+        final values = combineValue as AsyncData<(int, int)>;
+        return Text(
+            'Stream A: ${values.value.$1}, Stream B: ${values.value.$2}');
+      case AsyncLoading():
         return const CircularProgressIndicator();
-      case CombinedValueStateError(error: final error, stackTrace: final _):
-        return Text('Error: $error');
+      case AsyncError():
+        final error = combineValue as AsyncError;
+        return Text('Error: ${error.error}');
+      default:
+        return const Text('Unknown state');
     }
   }
 }

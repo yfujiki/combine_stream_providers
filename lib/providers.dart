@@ -10,28 +10,32 @@ final streamProviderB = StreamProvider<int>((ref) async* {
   yield* Stream.periodic(const Duration(seconds: 3), (index) => index);
 });
 
-final combinedStateNotifierProvider = StateNotifierProvider.autoDispose<
-    CombinedValueStateNotifier, CombinedValueState>((ref) {
+final combinedValueNotifierProvider =
+    AsyncNotifierProvider<CombinedValueAsyncNotifier, (int, int)>(
+        CombinedValueAsyncNotifier.new);
+
+final combinedValueProvider = Provider.autoDispose((ref) {
   final asyncValueA = ref.watch(streamProviderA);
   final asyncValueB = ref.watch(streamProviderB);
 
-  CombinedValueStateNotifier state = CombinedValueStateNotifier();
+  CombinedValueAsyncNotifier notifier =
+      ref.read(combinedValueNotifierProvider.notifier);
 
   asyncValueA.when(data: (value) {
-    state.updateA(value);
+    notifier.updateA(value);
   }, error: (error, stackTrace) {
-    state.updateWithError(error, stackTrace);
+    notifier.updateWithError(error, stackTrace);
   }, loading: () {
-    state.updateLoading();
+    notifier.updateLoading();
   });
 
   asyncValueB.when(data: (value) {
-    state.updateB(value);
+    notifier.updateB(value);
   }, error: (error, stackTrace) {
-    state.updateWithError(error, stackTrace);
+    notifier.updateWithError(error, stackTrace);
   }, loading: () {
-    state.updateLoading();
+    notifier.updateLoading();
   });
 
-  return state;
+  return notifier;
 });

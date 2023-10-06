@@ -1,49 +1,41 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-sealed class CombinedValueState {}
-
-class CombinedValueStateData extends CombinedValueState {
-  final (int, int) values;
-
-  CombinedValueStateData(this.values);
-}
-
-class CombinedValueStateLoading extends CombinedValueState {}
-
-class CombinedValueStateError extends CombinedValueState {
-  final Object error;
-  final StackTrace stackTrace;
-
-  CombinedValueStateError(this.error, this.stackTrace);
-}
-
-class CombinedValueStateNotifier extends StateNotifier<CombinedValueState> {
-  CombinedValueStateNotifier() : super(CombinedValueStateLoading());
+class CombinedValueAsyncNotifier extends AsyncNotifier<(int, int)> {
+  @override
+  FutureOr<(int, int)> build() {
+    return (0, 0);
+  }
 
   void updateWithError(Object error, StackTrace stackTrace) {
-    state = CombinedValueStateError(error, stackTrace);
+    state = AsyncError(error, stackTrace);
   }
 
   void updateLoading() {
-    if (state is CombinedValueStateLoading) return;
-    state = CombinedValueStateLoading();
+    if (state is AsyncLoading) return;
+    state = const AsyncLoading();
   }
 
   void updateA(int value) {
-    if (state is CombinedValueStateData) {
-      CombinedValueStateData currentState = state as CombinedValueStateData;
-      state = CombinedValueStateData((value, currentState.values.$2));
-    } else {
-      state = CombinedValueStateData((value, 0));
+    switch (state) {
+      case AsyncData():
+        AsyncData currentState = state as AsyncData;
+        state = AsyncData((value, currentState.value.$2));
+        break;
+      default:
+        state = AsyncData((value, 0));
     }
   }
 
   void updateB(int value) {
-    if (state is CombinedValueStateData) {
-      CombinedValueStateData currentState = state as CombinedValueStateData;
-      state = CombinedValueStateData((currentState.values.$1, value));
-    } else {
-      state = CombinedValueStateData((0, value));
+    switch (state) {
+      case AsyncData():
+        AsyncData currentState = state as AsyncData;
+        state = AsyncData((currentState.value.$1, value));
+        break;
+      default:
+        state = AsyncData((0, value));
     }
   }
 }
