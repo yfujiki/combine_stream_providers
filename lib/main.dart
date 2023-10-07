@@ -57,9 +57,14 @@ class MyCombinedWidget extends ConsumerWidget {
     switch (combineValue) {
       case AsyncData():
         final values = combineValue;
-        return Text(
-            'Stream A: ${values.value.$1}, Stream B: ${values.value.$2}');
+        if (values.value == null) {
+          return const CircularProgressIndicator();
+        } else {
+          return Text(
+              'Stream A: ${values.value!.$1}, Stream B: ${values.value!.$2}');
+        }
       case AsyncLoading():
+        // I don't think this is possible, but just in case
         return const CircularProgressIndicator();
       case AsyncError():
         final error = combineValue;

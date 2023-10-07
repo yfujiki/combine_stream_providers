@@ -11,5 +11,5 @@ final streamProviderB = StreamProvider<int>((ref) async* {
 });
 
 final combinedValueNotifierProvider =
-    AsyncNotifierProvider<CombinedValueAsyncNotifier, (int, int)>(
+    AsyncNotifierProvider<CombinedValueAsyncNotifier, (int, int)?>(
         CombinedValueAsyncNotifier.new);

@@ -3,33 +3,33 @@ import 'dart:async';
 import 'package:combine_stream_providers/providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class CombinedValueAsyncNotifier extends AsyncNotifier<(int, int)> {
+class CombinedValueAsyncNotifier extends AsyncNotifier<(int, int)?> {
   @override
-  FutureOr<(int, int)> build() {
-    state = const AsyncLoading();
-
+  FutureOr<(int, int)?> build() {
     final asyncValueA = ref.watch(streamProviderA);
     final asyncValueB = ref.watch(streamProviderB);
 
-    asyncValueA.when(data: (value) {
-      state = AsyncData(updateA(value));
-    }, error: (error, stackTrace) {
-      state = AsyncError(error, stackTrace);
-    }, loading: () {
-      state = const AsyncLoading();
-    });
+    asyncValueA.when(
+        data: (value) {
+          state = AsyncData(updateA(value));
+        },
+        error: (error, stackTrace) {
+          throw error;
+        },
+        loading: () {});
 
-    asyncValueB.when(data: (value) {
-      state = AsyncData(updateB(value));
-    }, error: (error, stackTrace) {
-      state = AsyncError(error, stackTrace);
-    }, loading: () {
-      state = const AsyncLoading();
-    });
+    asyncValueB.when(
+        data: (value) {
+          state = AsyncData(updateB(value));
+        },
+        error: (error, stackTrace) {
+          throw error;
+        },
+        loading: () {});
 
     if (state.asData == null) {
-      state = const AsyncLoading();
-      return (0, 0);
+      // means that both streams are still loading
+      return null;
     }
 
     return state.asData!.value;
