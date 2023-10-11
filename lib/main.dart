@@ -64,12 +64,12 @@ class MyCombinedWidget extends ConsumerWidget {
               'Stream A: ${values.value!.$1}, Stream B: ${values.value!.$2}');
         }
       case AsyncLoading():
-        // I don't think this is possible, but just in case
         return const CircularProgressIndicator();
       case AsyncError():
         final error = combineValue;
         return Text('Error: ${error.error}');
       default:
+        // Doesn't happen
         return const Text('Unknown state');
     }
   }
