@@ -55,20 +55,17 @@ class MyCombinedWidget extends ConsumerWidget {
     final combineValue = ref.watch(combinedValueNotifierProvider);
 
     switch (combineValue) {
-      case AsyncData():
-        final values = combineValue;
-        if (values.value == null) {
+      case AsyncData(value: (int, int)? value):
+        if (value == null) {
           return const CircularProgressIndicator();
         } else {
-          return Text(
-              'Stream A: ${values.value!.$1}, Stream B: ${values.value!.$2}');
+          return Text('Stream A: ${value.$1}, Stream B: ${value.$2}');
         }
       case AsyncLoading():
         return const CircularProgressIndicator();
-      case AsyncError():
-        final error = combineValue;
-        return Text('Error: ${error.error}');
-      default:
+      case AsyncError(error: Error error, stackTrace: StackTrace _):
+        return Text('Error: ${error.toString()}');
+      case _:
         // Doesn't happen
         return const Text('Unknown state');
     }
