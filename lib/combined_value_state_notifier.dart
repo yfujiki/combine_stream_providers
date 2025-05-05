@@ -1,15 +1,16 @@
-import 'dart:async';
-
 import 'package:combine_stream_providers/providers.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-class CombinedValueAsyncNotifier extends AsyncNotifier<(int, int)?> {
+part 'combined_value_state_notifier.g.dart';
+
+@riverpod
+class CombinedValueAsyncNotifier extends _$CombinedValueAsyncNotifier {
   @override
   FutureOr<(int, int)?> build() {
     debugPrint("rebuilding...");
-    final asyncValueA = ref.watch(streamProviderA);
-    final asyncValueB = ref.watch(streamProviderB);
+    final asyncValueA = ref.watch(streamAProvider);
+    final asyncValueB = ref.watch(streamBProvider);
 
     asyncValueA.when(
         data: (value) {

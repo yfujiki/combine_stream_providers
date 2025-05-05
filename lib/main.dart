@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'providers.dart';
+import 'combined_value_state_notifier.dart';
 
 void main() {
   runApp(const ProviderScope(
@@ -52,7 +52,7 @@ class MyCombinedWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final combineValue = ref.watch(combinedValueNotifierProvider);
+    final combineValue = ref.watch(combinedValueAsyncNotifierProvider);
 
     switch (combineValue) {
       case AsyncData(value: (int, int)? value):

@@ -1,15 +1,15 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import 'combined_value_state_notifier.dart';
+part 'providers.g.dart';
 
-final streamProviderA = StreamProvider<int>((ref) async* {
-  yield* Stream.periodic(const Duration(seconds: 2), (index) => index + 1);
-});
+@riverpod
+Stream<int> streamA(Ref ref) {
+  return Stream.periodic(const Duration(seconds: 2), (index) => index + 1);
+}
 
-final streamProviderB = StreamProvider<int>((ref) async* {
-  yield* Stream.periodic(const Duration(seconds: 3), (index) => index + 1);
-});
+@riverpod
+Stream<int> streamB(Ref ref) {
+  return Stream.periodic(const Duration(seconds: 3), (index) => index + 1);
+}
 
-final combinedValueNotifierProvider =
-    AsyncNotifierProvider<CombinedValueAsyncNotifier, (int, int)?>(
-        CombinedValueAsyncNotifier.new);
